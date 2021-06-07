@@ -15,7 +15,7 @@ class DataVaksin:
 
     def DataPenerima(self,val):
         cursor = self.db.cursor()
-        sql = "INSERT INTO datavaksin (nama,umur,gender,kota) VALUES (%s,%s,%s,%s)"
+        sql = "INSERT INTO datavaksin (nama,umur,gender,kota) VALUES (%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,val)
         self.db.commit()
         print("Data Berhasil Dimasukan! ")
@@ -242,7 +242,13 @@ class Penerima:
                 print(f"Total Tagihan Vaksin Anda sebanyak {total}")
                 self.payment(total)
 
-    def KuotaVaksin1(self):
+    
+    def Sertifikat(self,i,results):
+        i[0] = random.randint(0, 100)
+        results.append(i)
+        print(f"Sertifikat Vaksin 1 Anda Telah Keluar dengan nomor {i}")
+    
+    def KuotaVaksin1(self,i,results):
         hari = ["Senin (03/01/2022)","Selasa(04/01/2022)","Rabu(05/01/2022)","Kamis(06/01/2022)"]
         jam = ["10:00","13:00","15:00"]
         vaksint =["Astrazeneca","Sinopharm","Sinovac"] 
@@ -258,22 +264,26 @@ class Penerima:
             if agreement == "Y":
                 print(f"Anda Akan Divaksin Pada Hari {random.choice(hari)} pada jam {random.choice(jam)}")
                 print(f"Anda Akan Divaksin Dengan {random.choice(vaksint)}")
+                self.Sertifikat(i,results)
             elif agreement == "N":
                 print("Anda Tidak Di Vaksin Tahap 1")
                 
-    def KuotaVaksin2(self):
-        hari = ["Senin(31/01/2022)","Selasa(01/02/2022)","Rabu(02/02/2022)","Kamis(03/02/2022)"]
-        jam = ["10:00","13:00","15:00"]
-        nama = input("Masukkan Nama: ")
-        self.cursor.execute("SELECT nama FROM datavaksin WHERE nama = %s LIMIT 1",(nama,))
-        result = self.cursor.fetchone()
+    def KuotaVaksin2(self,results):
+        code = int(input("Masukkan Code Sertifikat Anda: "))
+        if code == results:
+            
+            hari = ["Senin(31/01/2022)","Selasa(01/02/2022)","Rabu(02/02/2022)","Kamis(03/02/2022)"]
+            jam = ["10:00","13:00","15:00"]
+            nama = input("Masukkan Nama: ")
+            self.cursor.execute("SELECT nama FROM datavaksin WHERE nama = %s LIMIT 1",(nama,))
+            result = self.cursor.fetchone()
 
-        if result is None:
-            print("Peserta Vaksin Tidak Terdaftar!")
-        elif result:
-            print(f"{nama} Terdaftar Sebagai Penerima Vaksin Tahap 2 ")  
-            print("Anda Telah Di Vaksin tahap 1")
-            print(f"Anda Akan Divaksin Pada Hari {random.choice(hari)} pada jam {random.choice(jam)}")
+            if result is None:
+                print("Peserta Vaksin Tidak Terdaftar!")
+            elif result:
+                print(f"{nama} Terdaftar Sebagai Penerima Vaksin Tahap 2 ")  
+                print("Anda Telah Di Vaksin tahap 1")
+                print(f"Anda Akan Divaksin Pada Hari {random.choice(hari)} pada jam {random.choice(jam)}")
 
     def infovaksinsasi(self):
         baca = open("Info Vaksinasi Covid-19.txt","r")
@@ -308,6 +318,8 @@ class Penerima:
             """)
 
             menu = int(input("Masukkan Menu : "))
+            results = []
+            i = [0]
 
             if menu == 1:
                 self.Person0()
@@ -317,9 +329,9 @@ class Penerima:
             elif menu == 3:
                 self.dv.showPenerima()
             elif menu == 4:
-                self.KuotaVaksin1()
+                self.KuotaVaksin1(i,results)
             elif menu == 5:
-                self.KuotaVaksin2()
+                self.KuotaVaksin2(results)
             elif menu == 6:
                 self.Person0()
                 self.PersonVaksinMandiri()
